@@ -7,20 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <form method="POST">
-    
-    <input type="text" name="number1"  placeholder="Первое число"> 
-    <input type="text" name="number2"  placeholder="Второе число"> 
-    <select  name="operation"> 
-    <option value='plus'>+ </option>
-    <option value='minus'>- </option>
-    <option value="multiply">* </option>
-    <option value="divide">/ </option>
-    </select>     
-
-    <input  type="submit" name="submit" value="Получить ответ"> 
-    </form>
-
     <?php
 
     if(isset($_POST['submit'])){
@@ -42,12 +28,33 @@
             $result = $number1 / $number2; 
             break;    
         }
-        echo "Ответ: $result";
+        
     }
         
-    function calculate($n1, $n2, $op){
-            
-    }
-        ?>
+    // function calculate($n1, $n2, $op){
+
+    // }
+    
+
+    ?>
+
+    <form method="POST">
+    
+    <input type="text" name="number1"  placeholder="Первое число"> 
+    <input type="text" name="number2"  placeholder="Второе число"> 
+    <select  name="operation"> 
+    <option value='plus'>+ </option>
+    <option value='minus'>- </option>
+    <option value="multiply">* </option>
+    <option value="divide">/ </option>
+    </select>     
+
+    <input  type="submit" name="submit" value="Получить ответ"> 
+    </form>
+
+    <?php
+    echo "Ответ: $result";
+    ?>
+    
 </body>
 </html>
