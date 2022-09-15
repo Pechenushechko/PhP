@@ -9,6 +9,12 @@
 <body>
     <?php
 
+    function calc ($n1, $n2, $n4, $n3 = 3, $n5 = 5){
+
+    }
+
+    calc(1,2,3);
+
     if(isset($_POST['submit'])){
     $number1 = $_POST['number1'];
     $number2 = $_POST['number2'];
@@ -34,7 +40,7 @@
     // function calculate($n1, $n2, $op){
 
     // }
-    
+    echo "Ответ: $result";
 
     ?>
 
@@ -52,9 +58,7 @@
     <input  type="submit" name="submit" value="Получить ответ"> 
     </form>
 
-    <?php
-    echo "Ответ: $result";
-    ?>
+    
     
 </body>
 </html>
