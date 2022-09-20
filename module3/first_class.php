@@ -67,7 +67,7 @@ class Cage{
     public Animal $animal;
 }
 
-$cat = new Animal();
+$cat = new Animal('adad', 2, 'omnivore');
 echo "Animal"."</br>";
 echo 'Name of object: '.$cat->name .'</br>';
 
@@ -100,7 +100,7 @@ echo "Birthday of object: " .$alt->birthday ."</br>";
 
 echo "</br></br></br>";
 
-$cage1 = new Cage();
+$cage1 = new Cage(1, 'house');
 echo "Cages" ."</br>"; 
 $cage1->id = 1;
 $cage1->type = "house";
