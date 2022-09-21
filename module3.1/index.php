@@ -1,8 +1,52 @@
 <?php
 
-use Animal as GlobalAnimal;
-use Employee as GlobalEmployee;
+class DataBase{
+    private $sqli;
 
+    function __construct($aSqli)
+    {
+        $this->sqli = $aSqli;
+    }
+
+    function getAnimals(){
+        $animals = [];
+
+    $animals_from_db = $this->sqli->query("SELECT * FROM `animals`")->fetch_all(MYSQLI_ASSOC);
+    foreach($animals_from_db as $animal){
+        $obj = null;
+
+        if($animal['sub_class'] == 'dog'){
+            $obj = New Dog($animal['name'], $animal['age'], $animal['type'], 'unknown');
+            $obj->id = $animal['id'];
+            $obj->setStatus($animal['status']);
+        }
+        if($animal['sub_class'] == 'cat'){
+            $obj = New Cat($animal['name'], $animal['age'], $animal['type'], 'unknown');
+            $obj->id = $animal['id'];
+            $obj->setStatus($animal['status']);
+        }
+        if($animal['sub_class'] == 'fish'){
+            $obj = new Fish($animal['name'], $animal['age'], $animal['type'], 'неизвестна');
+            $obj->id = $animal['id'];
+            $obj->setStatus($animal['status']);
+        }
+        if($obj != null){
+            $animals[] = $obj;
+        }
+    }
+        return $animals;
+    }
+
+    function updateAnimal($animal, $param, $value)
+    {
+        if($param == 'status'){
+            $animal->setStatus($value);
+            $this->sqli->query("UPDATE `animals` SET `status` = '".$value."' WHERE `id` = '".$animal->id."'");
+        }
+        return;
+    }
+
+}
 
 
 interface Feedable{
@@ -21,8 +65,6 @@ trait CanBeCaged{
     function setCage(Cage $cage){
         $this->cage = $cage;
     }
-
-
 
 }
 
@@ -44,11 +86,13 @@ trait CanBeVaccinated{
 
 abstract class Animal implements Feedable{
     use CanBeCaged;
+    public $id;
+
     public string $name = 'Meout';
     protected int $age = 1;
     protected string $type = 'predator';
     protected $available_types = ["predator", 'herbivore', 'omnivore'];
-    
+    protected $status;
     
     
 
@@ -65,6 +109,16 @@ abstract class Animal implements Feedable{
     public function getType(){
         return $this->type;
     }
+
+    public function getStatus(){
+        return $this->status;
+    }
+
+    public function setStatus($aStatus){
+        $this->status = $aStatus;
+    }
+
+    
 
     public function eat(){
         return "I eat";
@@ -130,7 +184,7 @@ class Fish extends Animal{
    }
 }
 
- class Employee{
+abstract class Employee{
     public $fname;
     public $mname;
     public $lname;
@@ -164,6 +218,35 @@ class Vet extends Employee{
         } 
         return "only Animals</br>";
     }   
+
+    public function changeAnimalStatus($animal, $db, $status = '2'){
+
+            return $db->updateAnimal($animal, 'status', $status);
+            //$animal->setStatus($status);
+    }
+}
+
+class Trainer extends Employee{
+}
+
+class Courier extends Employee{
+}
+
+class Cleaner extends Employee{
+}
+
+class Receptionist extends Employee{
+        function registAnimal($animal){
+
+        }
+}
+
+class Accountant extends Employee{
+}
+
+class Boss extends Employee{
+        public $email;
+        public $phone;
 }
 
 class Cage{
@@ -184,50 +267,40 @@ class Cage{
         
 }
 
-//Abstract class object
-// $cat = new Animal("Mur", 2, "predator");
-// echo "Animal"."</br>";
-// echo 'Name of object: '.$cat->name .'</br>';
-// echo "Age of object: ".$cat->getAge()."</br>";
-// echo 'Type of object: '.$cat->getType()."</br>";
-// echo 'Make sound: '.$cat->makeSound();
-
-$limbo = new Dog("limbo", 3, "omnivore", "Mops");
-$gar = new Cat("Garfield", 3, "preadator", "siam");
-$nemo = new Fish("Nemo", 1, 'omnivore', "ocean");
-$tweet = new Bird("Tweety", 1, "herbivore", true);
-
-echo "Gar: ".$gar->makeSound()."</br>";
-echo "Limbo: ".$limbo->makeSound()."</br>";
-echo "Nemo: ".$nemo->makeSound()."</br>";
-echo "Tweet: ".$tweet->makeSound()."</br>";
-
-
-echo "</br></br></br>";
-
-// $alt = new Employee("Johny", "Silverhand", "01.22");
- echo "Employee" ."</br>";
-// echo "Name of object: " .$alt->fname ."</br>";
-// echo "Last name of object: " .$alt->lname ."</br>";
-// echo "Birthday of object: " .$alt->birthday ."</br>";
+$db = new DataBase($sqli = new mysqli('localhost', 'root', '', 'zoostore'));
+$animals = $db->getAnimals();
 
 
 
+echo "Employee" ."</br>";
 $tink = new Vet("Furry", "Silvehand", "01.21", "UIB");
 echo "Vet: " .$tink->fname ."</br>";
-echo $tink->checkAnimal($limbo) ."</br>";
-echo $tink->checkAnimal($gar); 
-echo "</br>";
-                  
-     
 
-echo "</br></br>";
+echo $animals[0]->getStatus()."</br>";
 
-$cage1 = new Cage(1, "House");
-echo "Cages" ."</br>"; 
-$cage1->animal = $gar;
-echo "Id of object: " .$cage1->id ."</br>";
-echo "Type of object: " . $cage1->type ."</br>";
-echo "Animal in cage: " . $cage1->animal->name ."</br>";
+$tink->changeAnimalStatus($animals[0], $db);
+
+echo $animals[0]->name."</br>";
+echo $animals[0]->id."</br>";
+echo "id: ".$animals[0]->getStatus()."</br>";
 
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="">
+        <select name="" id="">
+            <?php foreach($animals as $animal){ ?>
+             <option value='<?= $animal->id ?>'><?= $animal->name ?></option>
+            <?php }?>
+        </select>
+    </form>
+</body>
+</html>
